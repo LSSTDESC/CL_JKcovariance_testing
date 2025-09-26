@@ -1,0 +1,34 @@
+# I/O configuration
+
+simulation_name: Takahashi 2019
+simulation_description: |
+  full-sky lensing maps and halos in lightcones
+  lightcones cover sky fraction of fsky=1/48, or 680 deg2,
+  480 realisations at z = 0.1, 0.3, 0.5, 0.7
+
+
+filetype: halocat
+    filename_base: data/catalogs/skyhalo_nres12r
+    filename_set: 067, 068
+    filename_suffix: .halo_z_0.508_0.574_m_13.8.fits
+
+filetype: shearcat
+    filename_base: data/allskymaps/allskymap_nres12r
+    filename_sets:  067, 068
+    filename_suffix: .zs18.mag.dat
+
+
+# Jackknife measurement configuration
+nsky: 2
+#nsky: 4
+#nsky: 8
+
+tree_corr_angle:
+    min: 0.1
+    max: 10.0
+    nbins: 10
+
+
+source_redshifts: 
+    min: 0.508
+    max: 0.574

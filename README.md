@@ -10,5 +10,19 @@ Here, we utilize the package TreeCorr and simulation data to calculate a jackkni
 ## Getting Started
 
 We include a default YAML file to define the simulation of interest, redshift snapshots, and area of sky that you wish to perform jackknife error estimation on.  The default file is `t19lite.yml`, which corresponds to utilizing a minimal amount of data from Takahashi et al. 2019 to test the code.
+```
+configs/t19lite.yml
+```
 
-t19lite.yml
+After cloning this repository, you should first install the package from the top directory with,
+```
+pip install -e .
+```
+
+You can run the default setting by executing the script in the `cljkcov` directory.
+
+```
+python compute_treecorr_cov.py
+```
+
+This will produce some exampe plots.... (still editing here)

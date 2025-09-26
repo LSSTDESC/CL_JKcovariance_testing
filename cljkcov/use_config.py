@@ -11,7 +11,7 @@ def load_yaml_config(ymlfile, print_sim_info=True) :
     print('Info: ', data.get('simulation_description'))
 
 
-    assert "filename" in data, "No filename base or suffix defined in yml."
+    assert "inputfile" in data, "No inputfile defined in yml."
 
 
     return data

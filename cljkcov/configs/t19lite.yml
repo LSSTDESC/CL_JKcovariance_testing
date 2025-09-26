@@ -7,12 +7,14 @@ simulation_description: |
   480 realisations at z = 0.1, 0.3, 0.5, 0.7
 
 
-filetype: halocat
+inputfile:
+    type: halocat
     filename_base: data/catalogs/skyhalo_nres12r
     filename_set: 067, 068
     filename_suffix: .halo_z_0.508_0.574_m_13.8.fits
 
-filetype: shearcat
+inputfile:
+    type: shearcat
     filename_base: data/allskymaps/allskymap_nres12r
     filename_sets:  067, 068
     filename_suffix: .zs18.mag.dat

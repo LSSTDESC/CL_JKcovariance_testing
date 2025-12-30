@@ -10,15 +10,16 @@ import os
 
 # input file
 
-sim_names = ['000', '064', '065', '066', '067', '068']
+sim_names = ['000', '021', '023', '025', '064', '065', '066', '067', '068']
 #sim_names = ['067', '068']
 #sim_names = ['068']
-nsky = [2]#, 4, 8, 16]
+nsky = [4, 8, 16]
+#nsky = [80]#, 4, 8, 16]
 len_sim = len(sim_names)
 
 min_ang=0.1
-max_ang=10.0
-nang_bins = 10
+max_ang=100.0
+nang_bins = 50
 zmin=0.508
 zmax=0.574
 for ii in range(len_sim):
@@ -33,7 +34,7 @@ for ii in range(len_sim):
   theta_i = data[1].data['theta_i']
   phi_i = data[1].data['phi_i']
   '''
-  filename = 'data/catalogs/skyhalo_nres12r'+sim_name+'.halo'
+  filename = '/global/cfs/cdirs/lsst/groups/CL/takahashi_sims/catalogs/skyhalo_nres12r'+sim_name+'.halo'
 
   with open(filename, 'rb') as f:
     n_halo = np.fromfile(f, dtype='int32', count=1)[0]
@@ -58,22 +59,23 @@ for ii in range(len_sim):
     lplane = np.fromfile(f, dtype='int16', count=n_halo)
     hc_list = np.fromfile(f, dtype='int16', count=n_halo)
 
-
+  #print(np.min(theta_i), np.max(theta_i), np.min(phi_i), np.max(phi_i))
   #plt.plot(theta_i, phi_i, 'k.')
   #plt.show()
 
   ### read in shear catalog
-  filename = 'data/allskymaps/allskymap_nres12r'+sim_name+'.zs18.mag.dat'
+  filename = '/global/cfs/cdirs/lsst/groups/CL/takahashi_sims/allskymaps/allskymap_nres12r'+sim_name+'.zs18.mag.dat'
   theta, phi, gamma1, gamma2, kappa, omega = read_functions.read_map(filename)
   #print(theta, phi, gamma1, gamma2, kappa, omega)
   
   for nn in nsky:
-   for jj in range(nn):
+   #for jj in range(nn):
+   for jj in np.arange(0, nn, 5):
       print(ii, sim_name, jj)
       ### dividing up the sky according to the phi coordinate value
       phi_lo = np.pi*2.0/nn*jj
       phi_hi = np.pi*2.0/nn*(jj+1)
-      ind_cl, =np.where((phi_i > phi_lo) & (phi_i < phi_hi) & (M200b>10.0**14.5) & \
+      ind_cl, =np.where((phi_i > phi_lo) & (phi_i < phi_hi) & (M200b>10.0**14.0) & \
                         (z_halo > zmin) & (z_halo < zmax)  )
       ind_map, =np.where((phi > phi_lo) & (phi < phi_hi))
       print(len(ind_cl), len(ind_map))
@@ -90,10 +92,10 @@ for ii in range(len_sim):
          ng = treecorr.NGCorrelation(min_sep=min_ang, max_sep=max_ang, nbins=nang_bins, sep_units='arcmin', bin_type='Log')
          ng.process(cat1, cat2, low_mem=True)
          #ng.process(cat1, cat2)
-         #cov_jk = ng.estimate_cov('jackknife')
+         cov_jk = ng.estimate_cov('jackknife')
         
-         ng.write('data/measurements/datavector_'+sim_name+'_patchN%i_%i.txt'%(nn, jj))
-         #np.savetxt('data/measurements/cov_'+sim_name+'_patchN%i_%i.txt'%(nn, jj), cov_jk)
+         ng.write('measurements/datavector_'+sim_name+'_patchN%i_%i.txt'%(nn, jj))
+         np.savetxt('measurements/cov_'+sim_name+'_patchN%i_%i.txt'%(nn, jj), cov_jk)
       #except:
       else:
          print('TreeCorr not successful:', ii, sim_name, nn, jj)

@@ -13,13 +13,13 @@ import os
 sim_names = ['000', '021', '023', '025', '064', '065', '066', '067', '068']
 #sim_names = ['067', '068']
 #sim_names = ['068']
-#nsky = [2]#, 4, 8, 16]
-nsky = [80]#, 4, 8, 16]
+nsky = [4, 8, 16]
+#nsky = [80]#, 4, 8, 16]
 len_sim = len(sim_names)
 
 min_ang=0.1
-max_ang=10.0
-nang_bins = 10
+max_ang=100.0
+nang_bins = 50
 zmin=0.508
 zmax=0.574
 for ii in range(len_sim):
@@ -34,7 +34,7 @@ for ii in range(len_sim):
   theta_i = data[1].data['theta_i']
   phi_i = data[1].data['phi_i']
   '''
-  filename = 'data/catalogs/skyhalo_nres12r'+sim_name+'.halo'
+  filename = '/global/cfs/cdirs/lsst/groups/CL/takahashi_sims/catalogs/skyhalo_nres12r'+sim_name+'.halo'
 
   with open(filename, 'rb') as f:
     n_halo = np.fromfile(f, dtype='int32', count=1)[0]
@@ -64,7 +64,7 @@ for ii in range(len_sim):
   #plt.show()
 
   ### read in shear catalog
-  filename = 'data/allskymaps/allskymap_nres12r'+sim_name+'.zs18.mag.dat'
+  filename = '/global/cfs/cdirs/lsst/groups/CL/takahashi_sims/allskymaps/allskymap_nres12r'+sim_name+'.zs18.mag.dat'
   theta, phi, gamma1, gamma2, kappa, omega = read_functions.read_map(filename)
   #print(theta, phi, gamma1, gamma2, kappa, omega)
   
@@ -94,8 +94,8 @@ for ii in range(len_sim):
          #ng.process(cat1, cat2)
          cov_jk = ng.estimate_cov('jackknife')
         
-         ng.write('data/measurements/datavector_'+sim_name+'_patchN%i_%i.txt'%(nn, jj))
-         np.savetxt('data/measurements/cov_'+sim_name+'_patchN%i_%i.txt'%(nn, jj), cov_jk)
+         ng.write('measurements/datavector_'+sim_name+'_patchN%i_%i.txt'%(nn, jj))
+         np.savetxt('measurements/cov_'+sim_name+'_patchN%i_%i.txt'%(nn, jj), cov_jk)
       #except:
       else:
          print('TreeCorr not successful:', ii, sim_name, nn, jj)

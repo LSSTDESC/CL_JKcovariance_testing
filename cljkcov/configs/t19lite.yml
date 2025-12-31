@@ -8,27 +8,26 @@ simulation_description: |
 
 
 inputfile:
-    type: halocat
-    filename_base: data/catalogs/skyhalo_nres12r
-    filename_set: 067, 068
-    filename_suffix: .halo_z_0.508_0.574_m_13.8.fits
+    filename_sets: ['000', '021', '023', '025', '064', '065', '066', '067', '068']
+    halocat_filename_base: /global/cfs/cdirs/lsst/groups/CL/takahashi_sims/catalogs/skyhalo_nres12r
+    halocat_filename_suffix: .halo
+    shear_filename_base: /global/cfs/cdirs/lsst/groups/CL/takahashi_sims/allskymaps/allskymap_nres12r
+    shear_filename_suffix: .zs18.mag.dat
+    ## shear_filename_suffix stil needs to be changed. s18 corresonds to the source redshift 0.508 to 0.574
 
-inputfile:
-    type: shearcat
-    filename_base: data/allskymaps/allskymap_nres12r
-    filename_sets:  ['067', '068']
-    filename_suffix: .zs18.mag.dat
 
 
 # Jackknife measurement configuration
-nsky: [2]
+nsky: [2, 4, 8, 6]
+run_treecorr: True
+outputpath: measurements/
 #nsky: 4
 #nsky: 8
 
 tree_corr_angle:
     min: 0.1
-    max: 10.0
-    nbins: 10
+    max: 100.0
+    nbins: 50
 
 
 source_redshifts: 

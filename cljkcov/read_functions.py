@@ -27,6 +27,7 @@ def read_halo_catalog(filename = 'skyhalo_nres12r067.halo'):
         lplane = np.fromfile(f, dtype='int16', count=n_halo)
         hc_list = np.fromfile(f, dtype='int16', count=n_halo)
 
+    print('loading completed:', filename)
     return n_halo, ID, PID, Mvir, M200b, M200c, M500c, M2500c, Rvir, Rs, z_halo, r_halo, Vr, theta_i, phi_i, theta_s, phi_s, ipix, multi, lplane, hc_list
 
 
@@ -41,7 +42,6 @@ def read_map(filename = 'allskymap_nres12r000.zs18.mag.dat'):
     nside = np.fromfile(f, dtype='int32', count=1)[0]
     npix = np.fromfile(f, dtype='int64', count=1)[0]
     rec = np.fromfile(f, dtype='uint32', count=1)[0]
-    print("nside:{} npix:{}".format(nside, npix))
 
     rec = np.fromfile(f, dtype='uint32', count=1)[0]
 

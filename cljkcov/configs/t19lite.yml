@@ -16,12 +16,12 @@ inputfile:
 inputfile:
     type: shearcat
     filename_base: data/allskymaps/allskymap_nres12r
-    filename_sets:  067, 068
+    filename_sets:  ['067', '068']
     filename_suffix: .zs18.mag.dat
 
 
 # Jackknife measurement configuration
-nsky: 2
+nsky: [2]
 #nsky: 4
 #nsky: 8
 

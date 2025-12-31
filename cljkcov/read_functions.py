@@ -3,6 +3,34 @@ import healpy as hp
 
 # input file
 #filename = 'allskymap_nres12r001.zs16.mag.dat'
+def read_halo_catalog(filename = 'skyhalo_nres12r067.halo'):
+    with open(filename, 'rb') as f:
+        n_halo = np.fromfile(f, dtype='int32', count=1)[0]
+        ID = np.fromfile(f, dtype='int32', count=n_halo)
+        PID = np.fromfile(f, dtype='int32', count=n_halo)
+        Mvir = np.fromfile(f, dtype='float32', count=n_halo)
+        M200b = np.fromfile(f, dtype='float32', count=n_halo)
+        M200c = np.fromfile(f, dtype='float32', count=n_halo)
+        M500c = np.fromfile(f, dtype='float32', count=n_halo)
+        M2500c = np.fromfile(f, dtype='float32', count=n_halo)
+        Rvir = np.fromfile(f, dtype='float32', count=n_halo)
+        Rs = np.fromfile(f, dtype='float32', count=n_halo)
+        z_halo = np.fromfile(f, dtype='float32', count=n_halo)
+        r_halo = np.fromfile(f, dtype='float32', count=n_halo)
+        Vr = np.fromfile(f, dtype='float32', count=n_halo)
+        theta_i = np.fromfile(f, dtype='float32', count=n_halo)
+        phi_i = np.fromfile(f, dtype='float32', count=n_halo)
+        theta_s = np.fromfile(f, dtype='float32', count=n_halo)
+        phi_s = np.fromfile(f, dtype='float32', count=n_halo)
+        ipix = np.fromfile(f, dtype='int64', count=n_halo)
+        multi = np.fromfile(f, dtype='int16', count=n_halo)
+        lplane = np.fromfile(f, dtype='int16', count=n_halo)
+        hc_list = np.fromfile(f, dtype='int16', count=n_halo)
+
+    return n_halo, ID, PID, Mvir, M200b, M200c, M500c, M2500c, Rvir, Rs, z_halo, r_halo, Vr, theta_i, phi_i, theta_s, phi_s, ipix, multi, lplane, hc_list
+
+
+
 def read_map(filename = 'allskymap_nres12r000.zs18.mag.dat'):
 
  skip = [0, 536870908, 1073741818, 1610612728, 2147483638, 2684354547, 3221225457]

@@ -18,6 +18,53 @@ def compute_treecorr_cov(yd) :
   '''
   print(yd)
 
+  min_ang=yd['tree_corr_angle']['min']
+  max_ang=yd['tree_corr_angle']['max']
+  nang_bins = yd['tree_corr_angle']['nbins']
+  zmin=yd['source_redshifts']['min']
+  zmax=yd['source_redshifts']['max']
+  
+  for sim_name in yd['inputfile']['filename_sets']:
+      print(sim_name)
+      filename = '/global/cfs/cdirs/lsst/groups/CL/takahashi_sims/catalogs/skyhalo_nres12r'+sim_name+'.halo'
+      n_halo, ID, PID, Mvir, M200b, M200c, M500c, M2500c, Rvir, Rs, z_halo, r_halo, Vr, theta_i, phi_i, theta_s, phi_s, ipix, multi, lplane, hc_list = read_functions.read_halo_catalog(filename)
+
+      filename = '/global/cfs/cdirs/lsst/groups/CL/takahashi_sims/allskymaps/allskymap_nres12r'+sim_name+'.zs18.mag.dat'
+      theta, phi, gamma1, gamma2, kappa, omega = read_functions.read_map(filename)
+
+      nsky=yd['nsky']
+      for nn in nsky:
+          for jj in np.arange(0, nn, 5):
+              print(sim_name, jj)
+              ### dividing up the sky according to the phi coordinate value
+              phi_lo = np.pi*2.0/nn*jj
+              phi_hi = np.pi*2.0/nn*(jj+1)
+              ind_cl, =np.where((phi_i > phi_lo) & (phi_i < phi_hi) & (M200b>10.0**14.0) & \
+                        (z_halo > zmin) & (z_halo < zmax)  )
+              ind_map, =np.where((phi > phi_lo) & (phi < phi_hi))
+              print(len(ind_cl), len(ind_map))
+
+              ## set up tree corr measurements
+              NJK_patch=50
+              cat1 = treecorr.Catalog(x=theta_i[ind_cl], y=phi_i[ind_cl], npatch=NJK_patch)
+              cat2 = treecorr.Catalog(x=theta[ind_map], y=phi[ind_map], g1 = gamma1[ind_map], g2=gamma2[ind_map], patch_centers=cat1.patch_centers, save_patch_dir='temp')
+
+              ## perform tree corr measurements
+              #try:
+              if 1:
+                os.system('rm -f temp/*')
+                ng = treecorr.NGCorrelation(min_sep=min_ang, max_sep=max_ang, nbins=nang_bins, sep_units='arcmin', bin_type='Log')
+                ng.process(cat1, cat2, low_mem=True)
+                cov_jk = ng.estimate_cov('jackknife')
+
+                ng.write('measurements/datavector_'+sim_name+'_patchN%i_%i.txt'%(nn, jj))
+                np.savetxt('measurements/cov_'+sim_name+'_patchN%i_%i.txt'%(nn, jj), cov_jk)
+              #except:
+              else:
+                print('TreeCorr not successful:', sim_name, nn, jj)
+              del ng
+              del cat1
+              del cat2
 
 
 if __name__ == "__main__":

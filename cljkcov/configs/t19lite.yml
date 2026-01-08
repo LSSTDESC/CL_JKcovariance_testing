@@ -18,7 +18,7 @@ inputfile:
 
 
 # Jackknife measurement configuration
-nsky: [2, 4, 8, 6]
+nsky: [2, 4, 8, 16]
 run_treecorr: True
 outputpath: measurements/
 #nsky: 4

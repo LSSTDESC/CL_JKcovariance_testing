@@ -47,7 +47,7 @@ def compute_treecorr_cov(yd) :
               print("Number of clusters in this division %i"%(len(ind_cl)) )
 
               ## set up tree corr measurements
-              NJK_patch=50
+              NJK_patch = yd['njk_patch'][nn]
               cat1 = treecorr.Catalog(x=theta_i[ind_cl], y=phi_i[ind_cl], npatch=NJK_patch)
               cat2 = treecorr.Catalog(x=theta[ind_map], y=phi[ind_map], g1 = gamma1[ind_map], g2=gamma2[ind_map], patch_centers=cat1.patch_centers, save_patch_dir='temp')
 
@@ -57,6 +57,15 @@ def compute_treecorr_cov(yd) :
                     os.system('rm -f temp/*')
                     ng = treecorr.NGCorrelation(min_sep=min_ang, max_sep=max_ang, nbins=nang_bins, sep_units='arcmin', bin_type='Log')
                     ng.process(cat1, cat2, low_mem=True)
+
+                    if yd['use_randoms']:
+                        theta_randoms = np.random.rand(len(ind_cl) * 5) * (np.pi - 0)
+                        phi_randoms = np.random.rand(len(ind_cl) * 5) * (phi_hi - phi_lo) + phi_lo
+                        cat_random = treecorr.Catalog(x=theta_randoms, y=phi_randoms, patch_centers=cat1.patch_centers, save_patch_dir='temp')
+                        rg = treecorr.NGCorrelation(min_sep=min_ang, max_sep=max_ang, nbins=nang_bins, sep_units='arcmin', bin_type='Log')
+                        rg.process(cat_random, cat2, low_mem=True)
+                        ng.calculateXi(rg=rg)
+
                     cov_jk = ng.estimate_cov('jackknife')
 
                     ng.write(yd['outputpath']+'datavector_'+sim_name+'_patchN%i_%i.txt'%(nn, jj))

@@ -20,6 +20,12 @@ inputfile:
 # Jackknife measurement configuration
 nsky: [2, 4, 8, 16]
 run_treecorr: True
+use_randoms: False
+njk_patch:
+  2:  50
+  4:  50
+  8:  50
+  16: 50
 outputpath: measurements_14_4/
 #nsky: 4
 #nsky: 8

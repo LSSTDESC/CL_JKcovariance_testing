@@ -1,0 +1,39 @@
+# I/O configuration
+
+simulation_name: Takahashi 2019
+simulation_description: |
+  full-sky lensing maps and halos in lightcones
+  lightcones cover sky fraction of fsky=1/48, or 680 deg2,
+  480 realisations at z = 0.1, 0.3, 0.5, 0.7
+
+
+inputfile:
+    filename_sets: ['000']
+    halocat_filename_base: /global/cfs/cdirs/lsst/groups/CL/takahashi_sims/catalogs/skyhalo_nres12r
+    halocat_filename_suffix: .halo
+    shear_filename_base: /global/cfs/cdirs/lsst/groups/CL/takahashi_sims/allskymaps/allskymap_nres12r
+    shear_filename_suffix: .zs18.mag.dat
+    ## shear_filename_suffix stil needs to be changed. s18 corresonds to the source redshift 0.508 to 0.574
+
+
+
+# Jackknife measurement configuration
+nsky: [2]
+run_treecorr: True
+outputpath: test_treecorr_random/
+#nsky: 4
+#nsky: 8
+
+tree_corr_angle:
+    min: 0.1
+    max: 100.0
+    nbins: 50
+
+
+source_redshifts: 
+    min: 0.508
+    max: 0.574
+    
+source_mass: 
+    min: 14.4
+    max: 15.5

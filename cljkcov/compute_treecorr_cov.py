@@ -5,6 +5,8 @@ import matplotlib.pyplot as plt
 import read_functions
 import astropy.io.fits as fits
 import os
+import gc
+import time
 
 from use_config import load_yaml_config
 
@@ -49,25 +51,28 @@ def compute_treecorr_cov(yd) :
               ## set up tree corr measurements
               NJK_patch=50
               cat1 = treecorr.Catalog(x=theta_i[ind_cl], y=phi_i[ind_cl], npatch=NJK_patch)
-              cat2 = treecorr.Catalog(x=theta[ind_map], y=phi[ind_map], g1 = gamma1[ind_map], g2=gamma2[ind_map], patch_centers=cat1.patch_centers, save_patch_dir='temp')
+              cat2 = treecorr.Catalog(x=theta[ind_map], y=phi[ind_map], g1 = gamma1[ind_map], g2=gamma2[ind_map], patch_centers=cat1.patch_centers)#, save_patch_dir='temp')
 
               ## perform tree corr measurements
               if yd['run_treecorr']:
-                try:
-                    os.system('rm -f temp/*')
-                    ng = treecorr.NGCorrelation(min_sep=min_ang, max_sep=max_ang, nbins=nang_bins, sep_units='arcmin', bin_type='Log')
-                    ng.process(cat1, cat2, low_mem=True)
-                    cov_jk = ng.estimate_cov('jackknife')
+                ng = treecorr.NGCorrelation(min_sep=min_ang, max_sep=max_ang, nbins=nang_bins, sep_units='arcmin', bin_type='Log')
+                start = time.time
+                ng.process(cat1, cat2, low_mem=False)
+                end = time.time()
+                print(f'ng procees took {end - start:.1f}s')
+                cov_jk = ng.estimate_cov('jackknife')
 
-                    ng.write(yd['outputpath']+'datavector_'+sim_name+'_patchN%i_%i.txt'%(nn, jj))
-                    np.savetxt(yd['outputpath']+'cov_'+sim_name+'_patchN%i_%i.txt'%(nn, jj), cov_jk)
-                    del ng
-                except:
-                    print('TreeCorr not successful!')
+                ng.write(yd['outputpath']+'datavector_'+sim_name+'_patchN%i_%i.txt'%(nn, jj))
+                np.savetxt(yd['outputpath']+'cov_'+sim_name+'_patchN%i_%i.txt'%(nn, jj), cov_jk)
+                del ng
                 del cat1
                 del cat2
               else:
-                print('TreeCorr not run.')  
+                print('TreeCorr not run.')
+                  
+      del n_halo, ID, PID, Mvir, M200b, M200c, M500c, M2500c, Rvir, Rs, z_halo, r_halo, Vr, theta_i, phi_i, theta_s, phi_s, ipix, multi, lplane, hc_list
+      del theta, phi, gamma1, gamma2, kappa, omega
+      gc.collect()
 
 
 if __name__ == "__main__":

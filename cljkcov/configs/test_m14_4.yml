@@ -14,7 +14,7 @@ inputfile:
 # Jackknife measurement configuration
 nsky: [2]
 run_treecorr: True
-outputpath: /pscratch/sd/k/kabelo/measurements_14_4_test/
+outputpath: measurements_14_4_test/
 tree_corr_angle:
     min: 0.1
     max: 100.0

@@ -1,3 +1,4 @@
+cljkcov/*.txt
 cljkcov/temp/*
 cljkcov/measurements/*
 takahashi_analysis/measurements/*

@@ -25,6 +25,7 @@ def compute_treecorr_cov(yd) :
   zmax=yd['source_redshifts']['max']
   mmin=yd['source_mass']['min']
   mmax=yd['source_mass']['max']
+  low_memory_flag = yd.get('low_memory_flag', True)
   
   for sim_name in yd['inputfile']['filename_sets']:
       print(sim_name)
@@ -36,8 +37,9 @@ def compute_treecorr_cov(yd) :
 
       nsky=yd['nsky']
       for nn in nsky:
-          for jj in range(nn):
+          #for jj in range(nn):
               ### dividing up the sky according to the phi coordinate value
+              jj = 0
               phi_lo = np.pi*2.0/nn*jj
               phi_hi = np.pi*2.0/nn*(jj+1)
               ind_cl, =np.where((phi_i > phi_lo) & (phi_i < phi_hi) & (M200b>10.0**mmin) & (M200b<10.0**mmax) & \
@@ -56,14 +58,14 @@ def compute_treecorr_cov(yd) :
                 try:
                     os.system('rm -f temp/*')
                     ng = treecorr.NGCorrelation(min_sep=min_ang, max_sep=max_ang, nbins=nang_bins, sep_units='arcmin', bin_type='Log')
-                    ng.process(cat1, cat2, low_mem=True)
+                    ng.process(cat1, cat2, low_mem=low_memory_flag)
 
                     if yd['use_randoms']:
                         theta_randoms = np.random.rand(len(ind_cl) * 5) * (np.pi - 0)
                         phi_randoms = np.random.rand(len(ind_cl) * 5) * (phi_hi - phi_lo) + phi_lo
                         cat_random = treecorr.Catalog(x=theta_randoms, y=phi_randoms, patch_centers=cat1.patch_centers, save_patch_dir='temp')
                         rg = treecorr.NGCorrelation(min_sep=min_ang, max_sep=max_ang, nbins=nang_bins, sep_units='arcmin', bin_type='Log')
-                        rg.process(cat_random, cat2, low_mem=True)
+                        rg.process(cat_random, cat2, low_mem=low_memory_flag)
                         ng.calculateXi(rg=rg)
 
                     cov_jk = ng.estimate_cov('jackknife')

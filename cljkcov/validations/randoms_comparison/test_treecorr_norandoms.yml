@@ -21,6 +21,7 @@ inputfile:
 nsky: [2]
 run_treecorr: True
 use_randoms: False
+low_memory_flag: True
 njk_patch:
   2: 50
 outputpath: validations/randoms_comparison/test_treecorr/

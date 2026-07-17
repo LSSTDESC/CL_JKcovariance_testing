@@ -8,7 +8,7 @@ simulation_description: |
 
 
 inputfile:
-    filename_sets: ['000', '021', '023', '025', '064', '065', '066', '067', '068']
+    filename_sets: ['000','001','002','003','004','005','006','007','008','009','010','011','012','013','014','015','016','017','018','019','020','021','022','023','024','025','026','027','028','029','030','031','032','033','034','035','036','037','038','039','040','041','042','043','044','045','046','047','048','049','050','051','052', '053']
     halocat_filename_base: /global/cfs/cdirs/lsst/groups/CL/takahashi_sims/catalogs/skyhalo_nres12r
     halocat_filename_suffix: .halo
     shear_filename_base: /global/cfs/cdirs/lsst/groups/CL/takahashi_sims/allskymaps/allskymap_nres12r
@@ -21,6 +21,7 @@ inputfile:
 nsky: [32, 64, 128]
 run_treecorr: True
 use_randoms: False
+low_memory_flag: True
 njk_patch:
   32:  50
   64:  50
@@ -38,3 +39,7 @@ tree_corr_angle:
 source_redshifts: 
     min: 0.508
     max: 0.574
+
+source_mass: 
+    min: 14.0
+    max: 15.5

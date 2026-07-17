@@ -21,6 +21,7 @@ inputfile:
 nsky: [2, 4, 8, 16]
 run_treecorr: True
 use_randoms: False
+low_memory_flag: True
 njk_patch:
   2:  50
   4:  50

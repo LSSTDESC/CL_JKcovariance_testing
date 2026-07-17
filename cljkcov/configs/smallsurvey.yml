@@ -18,17 +18,15 @@ inputfile:
 
 
 # Jackknife measurement configuration
-nsky: [32, 64, 128]
+survey_area: [1300, 650, 320]   # survey area in deg^2, placeholders -- adjust as needed
 run_treecorr: True
 use_randoms: False
-low_memory_flag: True
+low_memory_flag: False
 njk_patch:
-  32:  50
-  64:  50
-  128: 50
-outputpath: measurements/
-#nsky: 4
-#nsky: 8
+  1300: 50
+  650:  50
+  320:  50
+outputpath: measurements_newtest/
 
 tree_corr_angle:
     min: 0.1

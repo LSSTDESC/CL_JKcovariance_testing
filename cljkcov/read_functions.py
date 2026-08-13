@@ -42,7 +42,8 @@ def read_map(filename = 'allskymap_nres12r000.zs18.mag.dat'):
     nside = np.fromfile(f, dtype='int32', count=1)[0]
     npix = np.fromfile(f, dtype='int64', count=1)[0]
     rec = np.fromfile(f, dtype='uint32', count=1)[0]
-
+    print('nside:', nside)
+    print('npix:', npix)
     rec = np.fromfile(f, dtype='uint32', count=1)[0]
 
     kappa = np.array([])

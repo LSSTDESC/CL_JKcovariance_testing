@@ -1,0 +1,44 @@
+# gt (reduced shear) version of ../delta_sigma/config.yml. Only the cluster
+# stages run in this pipeline; the upstream settings live in
+# ../common/config.yml and must match whatever produced the shared files in
+# outputs/.
+
+global:
+    nside: 64
+    chunk_rows: 1000000
+
+CLClusterShearCatalogs:
+    name: CLClusterShearCatalogs
+    # Profiles are binned in arcmin, so select sources within a fixed angle
+    # for every cluster rather than a fixed physical radius (use_radius: true
+    # would give each cluster its own theta_max = max_radius / D_A(z), leaving
+    # the outer arcmin bins incomplete for high-z clusters).
+    use_radius: false
+    max_angle: 22.0                 # arcmin; margin above r_max=20
+    delta_z: 0.2
+    redshift_cut_criterion: zmode
+    redshift_weight_criterion: zmode
+    redshift_cut_criterion_pdf_fraction: 0.9
+    subtract_mean_shear: false
+    # DP2 metadetect g1/g2 (Rubin and Sheldon catalogs) are in the image-pixel
+    # frame, whose g2 has the opposite sign to the sky (East-of-North) frame.
+    # "celestial" made CLMM rotate with the wrong g2 sign, so g_t averaged to zero
+    # (checked 2026-10-12 by recomputing g_t from the saved cluster-source pairs).
+    coordinate_system: euclidean
+    use_true_shear: false
+    delta_sigma: false              # tangential/cross reduced shear; sigma_crit not applied
+
+CLClusterEnsembleProfiles:
+    name: CLClusterEnsembleProfiles
+    # For the binned clusters (z = 0.2-0.8) the delta_sigma range of
+    # 0.2-4.5 Mpc is ~0.4-1.0 to ~10-23 arcmin under the fiducial cosmology.
+    r_min: 1.0                      # arcmin
+    r_max: 20.0                     # arcmin; margin below max_angle=22 to avoid edge-of-selection bins
+    nbins: 6
+    bin_units: arcmin
+    cov_type: jackknife_covariance
+    jackknife_nside: 8              # ~54 deg2 regions
+    jackknife_regions: kmeans       # healpix (jackknife_nside) or kmeans (regions shared by all bins)
+    jackknife_kmeans_nregions: 30
+    jackknife_kmeans_seed: 11
+    magnification_profile: false

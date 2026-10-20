@@ -1,0 +1,91 @@
+# Shared DP2 stages for the RUBIN metadetect shear catalog: everything that
+# doesn't depend on the profile type. Outputs land in
+# /pscratch/sd/k/kabelo/dp2/outputs/rubin/ and are read as inputs by
+# ../delta_sigma and ../gt, which write their own outputs to
+# outputs/rubin/delta_sigma/ and outputs/rubin/gt/. Run this first.
+#
+# Settings shared by every shear catalog live in ./config.yml; see
+# pipeline_sheldon.yml for the Sheldon catalog.
+
+site:
+    # Cray/Perlmutter has no mpirun -- NerscSite launches via srun instead,
+    # and reads real node/cpu counts from SLURM_JOB_NODELIST/SLURM_CPUS_ON_NODE
+    # rather than psutil, so max_processes/max_threads (LocalSite-only
+    # concepts) aren't needed here.
+    name: nersc-interactive
+
+launcher:
+    name: mini
+    interval: 1.0
+
+modules: >
+    txpipe
+    rail.estimation.algos.bpz_lite
+    txpipe.extensions.cluster_counts.bin_cluster
+
+python_paths:
+    - /global/cfs/cdirs/m1727/kabelo/TXPipe
+
+stages:
+  - name: TXIngestHealsparseMask   # registry .hsp mask -> TXPipe mask file (format conversion only)
+
+  - name: TXCutShearCatalog
+    nprocess: 64
+    aliases:
+      shear_catalog: full_shear_catalog
+      cut_shear_catalog: shear_catalog
+
+  - name: TXSourceTomography
+    threads_per_process: 8
+
+  - name: TXSourceSelectorMetadetectDP2    # select and split objects into source bins
+    nprocess: 64
+
+  - name: TXShearCalibration       # Calibrate and split the source sample tomographically
+    nprocess: 64
+
+  - name: TXSourceMaps             # make source g1 and g2 maps
+    nprocess: 1
+
+  - name: TXJackknifeCentersSource     # Split the area into jackknife regions
+
+  - name: BPZliteInformer          # output_hdfn defaults to true, so this just uses the HDFN prior
+    aliases:
+      input: spectroscopic_catalog
+      model: source_photoz_model
+
+  - name: BPZliteEstimator         # per-object p(z) for the cut shear catalogue
+    nprocess: 64
+    aliases:
+      model: source_photoz_model
+      input: shear_catalog
+      output: source_photoz_pdfs
+
+  - name: CLClusterBinningRedshiftRichness
+    nprocess: 1
+
+  - name: TXPSFMaps
+
+output_dir: /pscratch/sd/k/kabelo/dp2/outputs/rubin/
+config: ./config.yml
+
+
+inputs:
+    spectroscopic_catalog: /global/cfs/cdirs/m1727/kabelo/TXPipe/data/example/outputs_metadetect/spectroscopic_catalog.hdf5
+    cluster_catalog: /pscratch/sd/k/kabelo/dp2/dp2_known_clusters_0.1.0_redmapper.hdf5
+    # txpipe_dp2_shear_catalog_Rubin_metaDetect 0.3.0 (zuntz), uncut
+    full_shear_catalog:
+        id: 137
+    # rubin_dp2_wide_metadetect_mask 0.2.0 (smau): riz coverage, bright-star
+    # (metadetect v2) and bright-galaxy masks, b < -25. Replaces mask 138
+    # (= the older rubin_dp2_shear_mask 0.1.0).
+    shear_mask:
+        id: 151
+    fiducial_cosmology: /global/u2/k/kabelo/CL_JKcovariance_testing/cosmology/cosmology_t17_fid.yml
+
+# needed for the `id:` lookups above; {} uses your default dataregistry config
+registry: {}
+
+resume: true
+log_dir: /pscratch/sd/k/kabelo/dp2/outputs/rubin/logs
+pipeline_log: /pscratch/sd/k/kabelo/dp2/outputs/rubin/log_dp2_common.txt

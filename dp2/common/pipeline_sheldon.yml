@@ -1,0 +1,89 @@
+# Shared DP2 stages for the SHELDON (DESC) metadetect shear catalog:
+# everything that doesn't depend on the profile type. Outputs land in
+# /pscratch/sd/k/kabelo/dp2/outputs/sheldon/ and are read as inputs by
+# ../delta_sigma and ../gt. Run this first.
+#
+# Differences from pipeline_rubin.yml:
+#  - the catalog has only the ns/1p/1m (g1) shear steps, so TXPipe treats it as
+#    "scalar_metadetect" and calibrates with R = R11 for both components;
+#  - the source selector applies E. Sheldon's cuts (TXSourceSelectorScalarMetadetectDP2);
+#  - no TXPSFMaps: the catalog has no psf_g1/psf_g2 columns (only psfrec_* and
+#    psf_*_original). It is not needed for the cluster profiles.
+# Settings shared by every shear catalog live in ./config.yml.
+
+site:
+    name: nersc-interactive
+
+launcher:
+    name: mini
+    interval: 1.0
+
+modules: >
+    txpipe
+    rail.estimation.algos.bpz_lite
+    txpipe.extensions.cluster_counts.bin_cluster
+
+python_paths:
+    - /global/cfs/cdirs/m1727/kabelo/TXPipe
+
+stages:
+  - name: TXIngestHealsparseMask   # registry .hsp mask -> TXPipe mask file (format conversion only)
+
+  - name: TXCutShearCatalog
+    nprocess: 64
+    aliases:
+      shear_catalog: full_shear_catalog
+      cut_shear_catalog: shear_catalog
+
+  - name: TXSourceTomography
+    threads_per_process: 8
+
+  - name: TXSourceSelectorScalarMetadetectDP2    # Erin's cuts; R11 from 1p/1m
+    nprocess: 64
+
+  - name: TXShearCalibration
+    nprocess: 64
+
+  - name: TXSourceMaps
+    nprocess: 1
+
+  - name: TXJackknifeCentersSource
+
+  - name: BPZliteInformer
+    aliases:
+      input: spectroscopic_catalog
+      model: source_photoz_model
+
+  - name: BPZliteEstimator
+    nprocess: 64
+    aliases:
+      model: source_photoz_model
+      input: shear_catalog
+      output: source_photoz_pdfs
+
+  - name: CLClusterBinningRedshiftRichness
+    nprocess: 1
+
+output_dir: /pscratch/sd/k/kabelo/dp2/outputs/sheldon/
+config: ./config.yml
+
+
+inputs:
+    spectroscopic_catalog: /global/cfs/cdirs/m1727/kabelo/TXPipe/data/example/outputs_metadetect/spectroscopic_catalog.hdf5
+    cluster_catalog: /pscratch/sd/k/kabelo/dp2/dp2_known_clusters_0.1.0_redmapper.hdf5
+    # txpipe_dp2_shear_catalog_desc_metaDetect_masked 0.1.0 (zuntz): Sheldon
+    # metadetect v1.1, already cut to Erin's wide footprint (registry mask 148)
+    full_shear_catalog:
+        id: 147
+    # rubin_dp2_wide_metadetect_mask 0.2.0 (smau), the DESC mask for metadetect
+    # catalogs; cutting 147 with it gives the intersection 148 & 151.
+    shear_mask:
+        id: 151
+    fiducial_cosmology: /global/u2/k/kabelo/CL_JKcovariance_testing/cosmology/cosmology_t17_fid.yml
+
+# needed for the `id:` lookups above; {} uses your default dataregistry config
+registry: {}
+
+resume: true
+log_dir: /pscratch/sd/k/kabelo/dp2/outputs/sheldon/logs
+pipeline_log: /pscratch/sd/k/kabelo/dp2/outputs/sheldon/log_dp2_common.txt

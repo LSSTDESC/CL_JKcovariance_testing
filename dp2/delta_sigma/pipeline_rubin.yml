@@ -1,0 +1,50 @@
+# Delta-sigma cluster profiles for DP2: RUBIN shear catalog.
+#
+# Only the delta_sigma-specific stages run here. Everything upstream (cut shear
+# catalogue, source selection/tomography, BPZ p(z), cluster binning) is
+# shared with the gt pipeline and read from
+# /pscratch/sd/k/kabelo/dp2/outputs/rubin/ via `inputs` below, so run
+# ../common/pipeline_rubin.yml first if those are missing. Outputs and stage logs go
+# under outputs/rubin/delta_sigma/ so they don't clash with the gt ones (same
+# stage names, same output tags).
+
+site:
+    name: nersc-interactive
+
+launcher:
+    name: mini
+    interval: 1.0
+
+modules: >
+    txpipe
+    txpipe.extensions.cluster_counts.sources_select_compute
+    txpipe.extensions.cluster_counts.make_ensemble_profile
+
+python_paths:
+    - /global/cfs/cdirs/m1727/kabelo/TXPipe
+
+stages:
+  - name: CLClusterShearCatalogs
+    classname: CLClusterShearCatalogs
+    nprocess: 1
+
+  - name: CLClusterEnsembleProfiles
+    classname: CLClusterEnsembleProfiles
+    nprocess: 1
+
+output_dir: /pscratch/sd/k/kabelo/dp2/outputs/rubin/delta_sigma/
+config: ./config.yml   # shared by all shear catalogs
+
+inputs:
+    # external
+    cluster_catalog: /pscratch/sd/k/kabelo/dp2/dp2_known_clusters_0.1.0_redmapper.hdf5
+    fiducial_cosmology: /global/u2/k/kabelo/CL_JKcovariance_testing/cosmology/cosmology_t17_fid.yml
+    # shared outputs of ../common (profile-type independent)
+    shear_catalog: /pscratch/sd/k/kabelo/dp2/outputs/rubin/shear_catalog.hdf5
+    shear_tomography_catalog: /pscratch/sd/k/kabelo/dp2/outputs/rubin/shear_tomography_catalog.hdf5
+    source_photoz_pdfs: /pscratch/sd/k/kabelo/dp2/outputs/rubin/source_photoz_pdfs.hdf5
+    cluster_catalog_tomography: /pscratch/sd/k/kabelo/dp2/outputs/rubin/cluster_catalog_tomography.hdf5
+
+resume: true
+log_dir: /pscratch/sd/k/kabelo/dp2/outputs/rubin/delta_sigma/logs
+pipeline_log: /pscratch/sd/k/kabelo/dp2/outputs/rubin/delta_sigma/log_dp2_delta_sigma.txt

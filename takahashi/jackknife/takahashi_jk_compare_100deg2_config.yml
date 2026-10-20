@@ -1,0 +1,38 @@
+CLClusterBinningRedshiftRichness:
+    zedge: [0.2, 0.4, 0.6, 0.8]
+    richedge: [13.8, 13.90, 14.06, 15.1]  # log10(M200b / Msun) -- tertile edges of the in-box mass
+                                           # distribution, carried over from takahashi_gt_100deg2_config.yml
+
+CLClusterShearCatalogs_angle:
+    name: CLClusterShearCatalogs_angle
+    chunk_rows: 200_000
+    use_radius: false
+    max_angle: 15.6                 # arcmin; equals what 5 Mpc subtends at z=0.4 in the fiducial cosmology
+    delta_z: 0.2
+    redshift_cut_criterion: ztrue
+    redshift_weight_criterion: ztrue
+    redshift_cut_criterion_pdf_fraction: 0.9
+    subtract_mean_shear: false
+    coordinate_system: celestial
+    use_true_shear: false
+    delta_sigma: false
+
+CLClusterEnsembleProfiles_angle:
+    name: CLClusterEnsembleProfiles_angle
+    bin_units: arcmin               # binning in Mpc with r_min=0.2 left the innermost bin empty at z~0.8
+                                    # (0.2 Mpc ~ 0.44', below the ~0.86' nside=4096 pixel scale)
+    r_min: 1.5                      # arcmin; a few Takahashi pixels
+    r_max: 14.0                     # arcmin; margin below max_angle=15.6
+    nbins: 6
+    cov_type: jackknife_covariance  # CLMM healpix jackknife -> tan_jk / cross_jk
+    jackknife_nside: 64             # ~0.84 deg^2 pixels
+    kmeans_jackknife_njk: -1        # kmeans jackknife -> tan_kmjk / cross_kmjk; -1 matches the number of
+                                    # occupied healpix pixels in each bin for a like-for-like comparison
+    kmeans_seed: 11
+    magnification_profile: false
+
+CLClusterJackknifeComparisonPlots:
+    cov_components: [tan_jk, tan_kmjk]
+    labels: [healpix JK, kmeans JK]
+    x_label: theta [arcmin]
+    y_label: g_t

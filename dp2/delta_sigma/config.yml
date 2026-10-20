@@ -1,0 +1,38 @@
+# delta_sigma version; see ../gt/config.yml for the reduced-shear one. Only the
+# cluster profile stages run in this pipeline; the upstream settings live in
+# ../common/config.yml and must match whatever produced the shared files in
+# outputs/.
+
+global:
+    nside: 64
+    chunk_rows: 1000000
+
+CLClusterShearCatalogs:
+    name: CLClusterShearCatalogs
+    use_radius: true
+    max_radius: 5.0                 # Mpc
+    delta_z: 0.2
+    redshift_cut_criterion: zmode
+    redshift_weight_criterion: zmode
+    redshift_cut_criterion_pdf_fraction: 0.9
+    subtract_mean_shear: false
+    # DP2 metadetect g1/g2 (Rubin and Sheldon catalogs) are in the image-pixel
+    # frame, whose g2 has the opposite sign to the sky (East-of-North) frame.
+    # "celestial" made CLMM rotate with the wrong g2 sign, so g_t averaged to zero
+    # (checked 2026-10-12 by recomputing g_t from the saved cluster-source pairs).
+    coordinate_system: euclidean
+    use_true_shear: false
+    delta_sigma: true
+
+CLClusterEnsembleProfiles:
+    name: CLClusterEnsembleProfiles
+    r_min: 0.2
+    r_max: 4.5                      # Mpc; margin below max_radius=5.0 to avoid edge-of-selection bins
+    nbins: 6
+    bin_units: mpc
+    cov_type: jackknife_covariance
+    jackknife_nside: 8              # ~54 deg2 regions
+    jackknife_regions: kmeans       # healpix (jackknife_nside) or kmeans (regions shared by all bins)
+    jackknife_kmeans_nregions: 30
+    jackknife_kmeans_seed: 11
+    magnification_profile: false

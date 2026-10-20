@@ -1,0 +1,61 @@
+site:
+    name: local
+    # ceci's mini/local scheduler assigns whole *nodes* to jobs, not individual
+    # cores -- max_threads alone only sets OMP_NUM_THREADS within a single job.
+    # max_processes creates that many independent 1-core "nodes", which is what
+    # actually lets multiple stage instances run concurrently instead of
+    # queueing one at a time on a single node.
+    max_processes: 4
+    max_threads: 1
+
+launcher:
+    name: mini
+    interval: 1.0
+
+modules: >
+    txpipe
+    txpipe.extensions.cluster_counts.sources_select_compute
+    txpipe.extensions.cluster_counts.bin_cluster
+    txpipe.extensions.cluster_counts.make_ensemble_profile
+    txpipe.extensions.cluster_counts.plot_jackknife_comparison
+
+python_paths:
+    - /global/cfs/cdirs/m1727/kabelo/TXPipe
+
+stages:
+  - name: CLClusterBinningRedshiftRichness
+    nprocess: 1
+
+  - name: CLClusterShearCatalogs_angle
+    classname: CLClusterShearCatalogs
+    nprocess: 1
+    aliases:
+        fiducial_cosmology: fiducial_cosmology
+        cluster_shear_catalogs: cluster_shear_catalogs_angle
+
+  - name: CLClusterEnsembleProfiles_angle
+    classname: CLClusterEnsembleProfiles
+    nprocess: 1
+    aliases:
+        fiducial_cosmology: fiducial_cosmology
+        cluster_shear_catalogs: cluster_shear_catalogs_angle
+        cluster_profiles: cluster_profiles_angle
+
+  - name: CLClusterJackknifeComparisonPlots
+    nprocess: 1
+    aliases:
+        cluster_profiles: cluster_profiles_angle
+
+output_dir: /pscratch/sd/k/kabelo/txp_cluster_compare/takahashi_jk_compare_100deg2
+config: ./takahashi/jackknife/takahashi_jk_compare_100deg2_config.yml
+
+inputs:
+    cluster_catalog: /pscratch/sd/k/kabelo/txp_cluster_compare/t17_cutout_100deg2/cluster_catalog.hdf5
+    shear_catalog: /pscratch/sd/k/kabelo/txp_cluster_compare/t17_cutout_100deg2/shear_catalog.hdf5
+    shear_tomography_catalog: /pscratch/sd/k/kabelo/txp_cluster_compare/t17_cutout_100deg2/shear_tomography_catalog.hdf5
+    source_photoz_pdfs: /pscratch/sd/k/kabelo/txp_cluster_compare/t17_cutout_100deg2/source_photoz_pdfs.hdf5
+    fiducial_cosmology: ./cosmology/cosmology_t17_fid.yml
+
+resume: true
+log_dir: /pscratch/sd/k/kabelo/txp_cluster_compare/takahashi_jk_compare_100deg2/logs
+pipeline_log: /pscratch/sd/k/kabelo/txp_cluster_compare/takahashi_jk_compare_100deg2/log_takahashi_jk_compare_100deg2.txt

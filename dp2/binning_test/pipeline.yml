@@ -1,0 +1,47 @@
+# Cluster-binning comparison for DP2: re-bin the clusters with one strategy
+# from strategies.sh and recompute the stacked profiles, for one shear
+# catalog and one profile type. Rendered by ceci (jinja2) with
+#   -t catalog=<rubin|sheldon> profile=<delta_sigma|gt> strategy=<A|B|C|D> config=<path>
+# from submit_binning_test.sh, which also writes the config.
+#
+# CLClusterShearCatalogs does not depend on the binning, so it is not rerun:
+# cluster_shear_catalogs comes from outputs/<catalog>/<profile>/ (rebuilt 2026-10-19 with the
+# redMaPPer catalog dp2_known_clusters_0.1.0_redmapper.hdf5).
+# Each strategy writes to its own outputs/<catalog>/binning_<strategy>/<profile>/.
+
+site:
+    name: nersc-interactive
+
+launcher:
+    name: mini
+    interval: 1.0
+
+modules: >
+    txpipe
+    txpipe.extensions.cluster_counts.bin_cluster
+    txpipe.extensions.cluster_counts.make_ensemble_profile
+
+python_paths:
+    - /global/cfs/cdirs/m1727/kabelo/TXPipe
+
+stages:
+  - name: CLClusterBinningRedshiftRichness
+    nprocess: 1
+
+  - name: CLClusterEnsembleProfiles
+    classname: CLClusterEnsembleProfiles
+    nprocess: 1
+
+output_dir: /pscratch/sd/k/kabelo/dp2/outputs/{{ catalog }}/binning_{{ strategy }}/{{ profile }}/
+config: {{ config }}
+
+inputs:
+    # external
+    cluster_catalog: /pscratch/sd/k/kabelo/dp2/dp2_known_clusters_0.1.0_redmapper.hdf5
+    fiducial_cosmology: /global/u2/k/kabelo/CL_JKcovariance_testing/cosmology/cosmology_t17_fid.yml
+    # from the {{ profile }} pipeline (binning independent)
+    cluster_shear_catalogs: /pscratch/sd/k/kabelo/dp2/outputs/{{ catalog }}/{{ profile }}/cluster_shear_catalogs.hdf5
+
+resume: true
+log_dir: /pscratch/sd/k/kabelo/dp2/outputs/{{ catalog }}/binning_{{ strategy }}/{{ profile }}/logs
+pipeline_log: /pscratch/sd/k/kabelo/dp2/outputs/{{ catalog }}/binning_{{ strategy }}/{{ profile }}/log_binning_test.txt

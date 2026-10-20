@@ -116,3 +116,18 @@ def read_map(filename = 'allskymap_nres12r000.zs18.mag.dat'):
 
  # example of saving data as a fits file
  #hp.fitsfunc.write_map('output.fits', kappa)
+
+
+def read_txpipe_cutout(cluster_file, shear_file):
+    '''
+    Read a TXPipe-format cutout (cluster_catalog.hdf5 + shear_catalog.hdf5).
+    Returns two dicts of numpy arrays: clusters and sources.
+    '''
+    import h5py
+    with h5py.File(cluster_file, 'r') as f:
+        g = f['clusters']
+        clusters = {k: g[k][:] for k in ['ra', 'dec', 'redshift', 'richness', 'cluster_id']}
+    with h5py.File(shear_file, 'r') as f:
+        g = f['shear/ns']
+        sources = {k: g[k][:] for k in ['ra', 'dec', 'g1', 'g2', 'weight', 'redshift_true']}
+    return clusters, sources

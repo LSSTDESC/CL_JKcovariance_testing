@@ -2,7 +2,7 @@
 # doesn't depend on the profile type. Outputs land in
 # /pscratch/sd/k/kabelo/dp2/outputs/rubin/ and are read as inputs by
 # ../delta_sigma and ../gt, which write their own outputs to
-# outputs/rubin/delta_sigma/ and outputs/rubin/gt/. Run this first.
+# outputs/rubin/delta_sigma_1p5mpc/ and outputs/rubin/gt_1p5mpc/. Run this first.
 #
 # Settings shared by every shear catalog live in ./config.yml; see
 # pipeline_sheldon.yml for the Sheldon catalog.

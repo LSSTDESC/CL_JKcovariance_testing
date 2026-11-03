@@ -10,7 +10,7 @@ global:
 CLClusterShearCatalogs:
     name: CLClusterShearCatalogs
     use_radius: true
-    max_radius: 5.0                 # Mpc
+    max_radius: 1.8                 # Mpc; margin above r_max=1.5
     delta_z: 0.2
     redshift_cut_criterion: zmode
     redshift_weight_criterion: zmode
@@ -27,8 +27,8 @@ CLClusterShearCatalogs:
 CLClusterEnsembleProfiles:
     name: CLClusterEnsembleProfiles
     r_min: 0.2
-    r_max: 4.5                      # Mpc; margin below max_radius=5.0 to avoid edge-of-selection bins
-    nbins: 6
+    r_max: 1.5                      # Mpc; margin below max_radius=1.8 to avoid edge-of-selection bins
+    nbins: 5                        # log-spaced: 0.2, 0.299, 0.448, 0.670, 1.002, 1.5 Mpc
     bin_units: mpc
     cov_type: jackknife_covariance
     jackknife_nside: 8              # ~54 deg2 regions

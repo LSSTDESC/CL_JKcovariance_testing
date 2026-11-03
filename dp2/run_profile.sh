@@ -1,4 +1,8 @@
 #!/bin/bash
+
+# This script computes cluster-lensing profiles for rubin and sheldon metadetect shear catalogs
+# It assumes most upstream data products from ./common/ already exist
+
 LOGDIR=/pscratch/sd/k/kabelo/dp2/outputs
 
 for catalog in ${@:-rubin sheldon}; do

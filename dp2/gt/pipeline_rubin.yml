@@ -5,7 +5,7 @@
 # shared with the delta_sigma pipeline (produced by ../common) and read from
 # /pscratch/sd/k/kabelo/dp2/outputs/rubin/ via `inputs` below, so run
 # ../common/pipeline_rubin.yml first if those are missing. Outputs and stage logs go
-# under outputs/rubin/gt/ so they don't clash with the delta_sigma ones (same
+# under outputs/rubin/gt_1p5mpc/ so they don't clash with the delta_sigma ones (same
 # stage names, same output tags).
 
 site:
@@ -32,7 +32,7 @@ stages:
     classname: CLClusterEnsembleProfiles
     nprocess: 1
 
-output_dir: /pscratch/sd/k/kabelo/dp2/outputs/rubin/gt/
+output_dir: /pscratch/sd/k/kabelo/dp2/outputs/rubin/gt_1p5mpc/
 config: ./config.yml   # shared by all shear catalogs
 
 inputs:
@@ -46,5 +46,5 @@ inputs:
     cluster_catalog_tomography: /pscratch/sd/k/kabelo/dp2/outputs/rubin/cluster_catalog_tomography.hdf5
 
 resume: true
-log_dir: /pscratch/sd/k/kabelo/dp2/outputs/rubin/gt/logs
-pipeline_log: /pscratch/sd/k/kabelo/dp2/outputs/rubin/gt/log_dp2_gt.txt
+log_dir: /pscratch/sd/k/kabelo/dp2/outputs/rubin/gt_1p5mpc/logs
+pipeline_log: /pscratch/sd/k/kabelo/dp2/outputs/rubin/gt_1p5mpc/log_dp2_gt.txt

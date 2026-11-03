@@ -39,7 +39,7 @@ set -e
 
 CECI=$TXPIPE_ENV/bin/ceci
 
-mkdir -p /pscratch/sd/k/kabelo/dp2/outputs/${CATALOG}/gt/logs
+mkdir -p /pscratch/sd/k/kabelo/dp2/outputs/${CATALOG}/gt_1p5mpc/logs
 
 echo "=== Starting DP2 gt pipeline for ${CATALOG}: $(date) ==="
 echo "TXPipe branch: $(git -C /global/cfs/cdirs/m1727/kabelo/TXPipe rev-parse --abbrev-ref HEAD) @ $(git -C /global/cfs/cdirs/m1727/kabelo/TXPipe rev-parse --short HEAD)"
